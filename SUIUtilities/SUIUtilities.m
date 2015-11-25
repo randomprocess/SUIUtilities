@@ -317,9 +317,9 @@ NSString *const sui_everVersion = @"sui_everVersion";
 + (SUIUtilitiesDelayTask)sui_delay:(NSTimeInterval)delay cb:(void (^)(void))completion;
 {
     __block dispatch_block_t closure = completion;
-    __block SUIDelayTask currTask = nil;
+    __block SUIUtilitiesDelayTask currTask = nil;
     
-    SUIDelayTask delayedBlock = ^(BOOL cancel) {
+    SUIUtilitiesDelayTask delayedBlock = ^(BOOL cancel) {
         if (cancel == NO) {
             dispatch_async(dispatch_get_main_queue(), closure);
         }
