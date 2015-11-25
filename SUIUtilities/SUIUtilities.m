@@ -7,7 +7,6 @@
 //
 
 #import "SUIUtilities.h"
-#import "ReactiveCocoa.h"
 
 NSString *const sui_everLaunched = @"sui_everLaunched";
 NSString *const sui_everVersion = @"sui_everVersion";
