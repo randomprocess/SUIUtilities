@@ -19,24 +19,39 @@
 
 #pragma mark - k
 
+#define kIOSVersion [[[UIDevice currentDevice] systemVersion] floatValue]
 #define kAboveIOS7 ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
 #define kAboveIOS8 ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
+#define kAboveIOS9 ([[[UIDevice currentDevice] systemVersion] floatValue] >= 9.0)
 
-#define kPad (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+#define kIPhone4 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 960), [[UIScreen mainScreen] currentMode].size) : NO)
+#define kIPhone5 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1136), [[UIScreen mainScreen] currentMode].size) : NO)
+#define kIPhone6 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(750, 1334), [[UIScreen mainScreen] currentMode].size) : NO)
+#define kIPhone6Plus ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1242, 2208), [[UIScreen mainScreen] currentMode].size) : NO)
+#define kIPad (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
 
-#define kBuildVersion [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]
 #define kVersion [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]
-
-#define kScreenWidth [UIScreen mainScreen].bounds.size.width
-#define kScreenHeight [UIScreen mainScreen].bounds.size.height
-
-#define kLanguage [[[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"] objectAtIndex:0] // @"zh-Hans", @"zh-Hant", @"en" ...
+#define kBuildVersion [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]
+#define kAppName [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"]
 #define kProjectName [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleExecutableKey]
+
+#define kScreenWidth ([UIScreen mainScreen].bounds.size.width)
+#define kScreenHeight ([UIScreen mainScreen].bounds.size.height)
+
+// iOS7 @"zh-Hans", @"zh-Hant", ...
+// iOS8 @"zh-Hans", @"zh-Hant", @"zh-HK", ...
+// iOS9 @"zh-Hans-CN", @"zh-Hant-CN", @"zh-HK", @"zh-TW", ...
+#define kLanguage [[[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"] objectAtIndex:0]
+#define kHans [kLanguage hasPrefix:@"zh-Hans"]
+#define kHant ([kLanguage rangeOfString:@"^(zh-Hant|zh-HK|zh-TW).*$" options:NSRegularExpressionSearch].location != NSNotFound)
+#define kHansOrHant (kHans || kHant)
 
 #define kDocument [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]
 #define kDocumentURL [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject]
 
 #define kOpenRemoteNoti ((kAboveIOS8) ? [[UIApplication sharedApplication] isRegisteredForRemoteNotifications] : ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] ? YES : NO))
+
+#define kNilOrNull(__ref) (((__ref) == nil) || ([(__ref) isEqual:[NSNull null]]))
 
 
 /*o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o~o*
@@ -48,12 +63,18 @@
 #define gFormat(__format, ...) [NSString stringWithFormat:__format, ##__VA_ARGS__]
 #define gFormatObj(__obj) [NSString stringWithFormat:@"%@", __obj]
 #define gFormatInteger(__integer) [NSString stringWithFormat:@"%zd", __integer]
+#define gFormatFloat(__float) [NSString stringWithFormat:@"%lf", __float]
 #define gPredicate(__format, ...) [NSPredicate predicateWithFormat:__format, ##__VA_ARGS__]
 
-#define gLocalized(__string) NSLocalizedString(__string, nil)
-
-#define gRGB(__r,__g,__b) [UIColor colorWithRed:(__r)/255.0f green:(__g)/255.0f blue:(__b)/255.0f alpha:1.0f]
 #define gRGBA(__r,__g,__b,__a) [UIColor colorWithRed:(__r)/255.0f green:(__g)/255.0f blue:(__b)/255.0f alpha:__a]
+#define gRGB(__r,__g,__b) gRGBA(__r, __g, __b, 1.0)
+// Hex string that looks like @"#FF0000" or @"FF0000"
+#define gHexA(__hex, __a) ({unsigned rgbValue = 0; \
+NSString *hexString = [__hex stringByReplacingOccurrencesOfString:@"#" withString:@""]; \
+[[NSScanner scannerWithString:hexString] scanHexInt:&rgbValue]; \
+[UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:__a];})
+#define gHex(__hex) gHexA(__hex, 1.0)
+#define gRandomColo [UIColor colorWithRed:gRandomInRange(0, 255)/255.0f green:gRandomInRange(0, 255)/255.0f blue:gRandomInRange(0, 255)/255.0f alpha:1.0f]
 
 #define gFont(__fontSize) [UIFont systemFontOfSize:__fontSize]
 #define gBFont(__fontSize) [UIFont boldSystemFontOfSize:__fontSize]
@@ -61,22 +82,24 @@
 #define gImageNamed(__name) [UIImage imageNamed:__name]
 #define gImageResource(__name, __type) [UIImage imageWithData:[NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:__name ofType:__type]]]
 
+#define gUserDefaults [NSUserDefaults standardUserDefaults]
+#define gUserDefaultsBoolForKey(__key) [gUserDefaults boolForKey:__key]
+#define gUserDefaultsObjForKey(__key) [gUserDefaults objectForKey:__key]
+#define gUserDefaultsIntegerForKey(__key) [gUserDefaults integerForKey:__key]
+
+#define gNotiCenter [NSNotificationCenter defaultCenter]
+#define gNotiCenterPost(__notiName, __obj) [gNotiCenter postNotificationName:__notiName object:__obj]
+
 #define gClassName(__obj) [NSString stringWithUTF8String:object_getClassName(__obj)]
 
+#define gLocalized(__string) NSLocalizedString(__string, nil)
+
 #define gWindow ((UIWindow *)[[[UIApplication sharedApplication] windows] objectAtIndex:0])
-
-#define gUserDefaults [NSUserDefaults standardUserDefaults]
-#define gUserDefaultsBoolForKey(__key) [[NSUserDefaults standardUserDefaults] boolForKey:__key]
-#define gUserDefaultsObjForKey(__key) [[NSUserDefaults standardUserDefaults] objectForKey:__key]
-#define gUserDefaultsIntegerForKey(__key) [[NSUserDefaults standardUserDefaults] integerForKey:__key]
-
-#define gNotificationCenter [NSNotificationCenter defaultCenter]
 
 #define gMainStoryboard [UIStoryboard storyboardWithName:@"Main" bundle:nil]
 #define gViewControllerInstantiate(__storyboardId) [gMainStoryboard instantiateViewControllerWithIdentifier:__storyboardId]
 
 #define gRandomInRange(__startIndex, __endIndex) (int)(arc4random_uniform(__endIndex-__startIndex+1) + __startIndex) // __startIndex ~ __endIndex
-#define gRandomColo [UIColor colorWithRed:gRandomInRange(0, 255)/255.0f green:gRandomInRange(0, 255)/255.0f blue:gRandomInRange(0, 255)/255.0f alpha:1.0f]
 
 #define gAdapt(__length) round( kScreenWidth / 320.0 * __length )
 #define gDegree(__para) __para*M_PI/180.0

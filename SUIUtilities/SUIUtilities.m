@@ -15,7 +15,6 @@ NSString *const sui_everVersion = @"sui_everVersion";
 @interface SUIUtilities ()
 
 @property (nonatomic,assign) SUILaunchedType launchedType;
-@property (nonatomic,copy,readonly) NSString *previousVersion;
 
 
 @end
@@ -32,7 +31,7 @@ NSString *const sui_everVersion = @"sui_everVersion";
     if (gUserDefaultsBoolForKey(sui_everLaunched))
     {
         NSString *cVersion = kVersion;
-        NSString *eVersion = self.previousVersion;
+        NSString *eVersion = [self previousVersion];
         
         if ([eVersion isEqualToString:cVersion]) {
             self.launchedType = SUILaunchedTypeLatestVersion;
