@@ -2,7 +2,7 @@
 Pod::Spec.new do |s|
 
   s.name         = 'SUIUtilities'
-  s.version      = '1.0.1'
+  s.version      = '1.0.2'
   s.platform     = :ios, '7.0'
   s.summary      = 'A collection of useful Objective-C utilities.'
 

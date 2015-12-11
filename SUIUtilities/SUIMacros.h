@@ -99,7 +99,7 @@ NSString *hexString = [__hex stringByReplacingOccurrencesOfString:@"#" withStrin
 #define gMainStoryboard [UIStoryboard storyboardWithName:@"Main" bundle:nil]
 #define gViewControllerInstantiate(__storyboardId) [gMainStoryboard instantiateViewControllerWithIdentifier:__storyboardId]
 
-#define gRandomInRange(__startIndex, __endIndex) (int)(arc4random_uniform(__endIndex-__startIndex+1) + __startIndex) // __startIndex ~ __endIndex
+#define gRandomInRange(__startIndex, __endIndex) (int)(arc4random_uniform((u_int32_t)(__endIndex-__startIndex+1)) + __startIndex) // __startIndex ~ __endIndex
 
 #define gAdapt(__length) round( kScreenWidth / 320.0 * __length )
 #define gDegree(__para) __para*M_PI/180.0
