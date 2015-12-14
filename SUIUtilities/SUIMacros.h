@@ -46,8 +46,11 @@
 #define kHant ([kLanguage rangeOfString:@"^(zh-Hant|zh-HK|zh-TW).*$" options:NSRegularExpressionSearch].location != NSNotFound)
 #define kHansOrHant (kHans || kHant)
 
-#define kDocument [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]
-#define kDocumentURL [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject]
+#define kPathOfDocument [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]
+#define kURLOfDocument [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject]
+
+#define kPathOfTmp NSTemporaryDirectory()
+#define kPathOfHome NSHomeDirectory()
 
 #define kOpenRemoteNoti ((kAboveIOS8) ? [[UIApplication sharedApplication] isRegisteredForRemoteNotifications] : ([[UIApplication sharedApplication] enabledRemoteNotificationTypes] ? YES : NO))
 
@@ -92,12 +95,14 @@ NSString *hexString = [__hex stringByReplacingOccurrencesOfString:@"#" withStrin
 
 #define gClassName(__obj) [NSString stringWithUTF8String:object_getClassName(__obj)]
 
-#define gLocalized(__string) NSLocalizedString(__string, nil)
+#define gLocalString(__string) NSLocalizedString(__string, nil)
+#define gLocalStringFromTable(__string, __fileName) NSLocalizedStringFromTable(__string, __fileName, nil)
 
 #define gWindow ((UIWindow *)[[[UIApplication sharedApplication] windows] objectAtIndex:0])
 
 #define gMainStoryboard [UIStoryboard storyboardWithName:@"Main" bundle:nil]
-#define gViewControllerInstantiate(__storyboardId) [gMainStoryboard instantiateViewControllerWithIdentifier:__storyboardId]
+#define gStoryboardNamed:(__name) [UIStoryboard storyboardWithName:__name bundle:nil]
+#define gStoryboardInstantiate(__name, __storyboardId) [gStoryboardNamed:(__name) instantiateViewControllerWithIdentifier:__storyboardId]
 
 #define gRandomInRange(__startIndex, __endIndex) (int)(arc4random_uniform((u_int32_t)(__endIndex-__startIndex+1)) + __startIndex) // __startIndex ~ __endIndex
 
