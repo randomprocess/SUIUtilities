@@ -19,6 +19,7 @@ Pod::Spec.new do |s|
 
 
   s.frameworks = 'UIKit', 'Foundation', 'CoreGraphics', 'QuartzCore'
+  s.dependency 'ReactiveCocoa', '~> 2.5'
   s.dependency 'AFNetworking', '~> 3.0.2'
 
   s.subspec 'Utilities' do |ss|
