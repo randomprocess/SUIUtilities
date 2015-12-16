@@ -2,7 +2,7 @@
 Pod::Spec.new do |s|
 
   s.name         = 'SUIUtilities'
-  s.version      = '1.0.4'
+  s.version      = '1.0.5'
   s.platform     = :ios, '7.0'
   s.summary      = 'A collection of useful Objective-C utilities.'
 
@@ -19,5 +19,15 @@ Pod::Spec.new do |s|
 
 
   s.frameworks = 'UIKit', 'Foundation', 'CoreGraphics', 'QuartzCore'
+  s.dependency 'AFNetworking', '~> 3.0.2'
+
+  s.subspec 'Utilities' do |ss|
+    ss.source_files = 'SUIUtilities/Utilities/*.{h,m}'
+  end
+
+  s.subspec 'Network' do |ss|
+    ss.dependency 'SUIUtilities/Utilities'
+    ss.source_files = 'SUIUtilities/Network/*.{h,m}'
+  end
 
 end
