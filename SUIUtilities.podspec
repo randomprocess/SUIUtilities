@@ -2,7 +2,7 @@
 Pod::Spec.new do |s|
 
   s.name         = 'SUIUtilities'
-  s.version      = '1.0.9'
+  s.version      = '1.1.0'
   s.platform     = :ios, '7.0'
   s.summary      = 'A collection of useful Objective-C utilities.'
 
@@ -24,6 +24,10 @@ Pod::Spec.new do |s|
 
   s.subspec 'Utilities' do |ss|
     ss.source_files = 'SUIUtilities/Utilities/*.{h,m}'
+  end
+
+  s.subspec 'RAC' do |ss|
+    ss.source_files = 'SUIUtilities/RAC/*.{h,m}'
   end
 
   s.subspec 'Network' do |ss|
