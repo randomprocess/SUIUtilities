@@ -11,42 +11,12 @@
 @implementation SUICommand
 
 
-+ (RACCommand *)command:(void (^)(void))cb
++ (RACCommand *)command:(RACSignal * _Nonnull (^)(void))cb
 {
-    RACCommand *curCommand = [[RACCommand alloc]
-                              initWithSignalBlock:^RACSignal *(id input) {
-                                  cb();
-                                  return [RACSignal empty];
-                              }];
-    return curCommand;
+    return [self commandEnabled:nil signalBlock:cb];
 }
 
-+ (RACCommand *)commandWithSignalBlock:(RACSignal * (^)(void))cb
-{
-    RACCommand *curCommand = [[RACCommand alloc]
-                              initWithSignalBlock:^RACSignal *(id input) {
-                                  RACSignal *curSignal = cb();
-                                  if (curSignal) {
-                                      return curSignal;
-                                  } else {
-                                      return [RACSignal empty];
-                                  }
-                              }];
-    return curCommand;
-}
-
-+ (RACCommand *)commandEnabled:(RACSignal *)enabledSignal block:(void (^)(void))cb
-{
-    RACCommand *curCommand = [[RACCommand alloc]
-                              initWithEnabled:enabledSignal
-                              signalBlock:^RACSignal *(id input) {
-                                  cb();
-                                  return [RACSignal empty];
-                              }];
-    return curCommand;
-}
-
-+ (RACCommand *)commandEnabled:(RACSignal *)enabledSignal signalBlock:(RACSignal * (^)(void))cb
++ (RACCommand *)commandEnabled:(RACSignal *)enabledSignal signalBlock:(RACSignal * _Nonnull (^)(void))cb
 {
     RACCommand *curCommand = [[RACCommand alloc]
                               initWithEnabled:enabledSignal
@@ -62,42 +32,12 @@
 }
 
 
-+ (RACCommand *)inputCommand:(void (^)(id input))cb
++ (RACCommand *)inputCommand:(RACSignal * _Nonnull (^)(id _Nonnull))cb
 {
-    RACCommand *curCommand = [[RACCommand alloc]
-                              initWithSignalBlock:^RACSignal *(id input) {
-                                  cb(input);
-                                  return [RACSignal empty];
-                              }];
-    return curCommand;
+    return [self inputCommandEnabled:nil signalBlock:cb];
 }
 
-+ (RACCommand *)inputCommandWithSignalBlock:(RACSignal * (^)(id input))cb
-{
-    RACCommand *curCommand = [[RACCommand alloc]
-                              initWithSignalBlock:^RACSignal *(id input) {
-                                  RACSignal *curSignal = cb(input);
-                                  if (curSignal) {
-                                      return curSignal;
-                                  } else {
-                                      return [RACSignal empty];
-                                  }
-                              }];
-    return curCommand;
-}
-
-+ (RACCommand *)inputCommandEnabled:(RACSignal *)enabledSignal block:(void (^)(id input))cb
-{
-    RACCommand *curCommand = [[RACCommand alloc]
-                              initWithEnabled:enabledSignal
-                              signalBlock:^RACSignal *(id input) {
-                                  cb(input);
-                                  return [RACSignal empty];
-                              }];
-    return curCommand;
-}
-
-+ (RACCommand *)inputCommandEnabled:(RACSignal *)enabledSignal signalBlock:(RACSignal * (^)(id input))cb
++ (RACCommand *)inputCommandEnabled:(RACSignal *)enabledSignal signalBlock:(RACSignal * _Nonnull (^)(id _Nonnull))cb
 {
     RACCommand *curCommand = [[RACCommand alloc]
                               initWithEnabled:enabledSignal
